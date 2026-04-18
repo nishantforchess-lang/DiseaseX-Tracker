@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "-_Uzw5VKA4b21o5qTOClZ"
+uri = "file://artifacts/diseasex-mobile/assets/images/icon.png"
+type = "image"
+title = "generated_image"

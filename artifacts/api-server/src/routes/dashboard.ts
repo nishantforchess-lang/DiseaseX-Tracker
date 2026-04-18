@@ -99,7 +99,7 @@ router.get("/dashboard/patient-queue", async (_req, res): Promise<void> => {
       return {
         patient,
         latestAssessment,
-        topMatch,
+        topMatch: topMatch ?? undefined,
         urgency,
       };
     }),
