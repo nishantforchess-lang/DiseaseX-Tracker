@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "DiseaseX"
+version = "1.0.0"
+id = "artifacts/diseasex"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22807
+
+[services.development]
+run = "pnpm --filter @workspace/diseasex run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/diseasex", "run", "build" ]
+publicDir = "artifacts/diseasex/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22807"
+BASE_PATH = "/"

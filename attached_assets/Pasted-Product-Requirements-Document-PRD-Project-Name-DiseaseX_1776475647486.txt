@@ -1,0 +1,74 @@
+Product Requirements Document (PRD)
+Project Name: DiseaseX(Triage & Protocol Engine)
+Product Goal
+Empower frontline health workers in remote regions to rapidly identify known disease patterns and initiate life-saving treatments through:
+Rapid Pattern Matching: Ruling out known killers (Malaria, Pneumonia, Cholera) in seconds.
+Protocol Guidance: Providing immediate WHO/local treatment steps based on clinical signs.
+Offline Capability: Ensuring functionality in regions with zero connectivity.
+Triage Acceleration: Reducing the time between symptom onset and first-dose treatment.
+The North Star: "Rule out the known to treat the urgent."
+
+Design System
+Colors
+Primary: Deep Teal #0D9488 (Professional, trustworthy, high-contrast)
+Secondary: Slate #1E293B
+Background: Off-White #F8FAFC
+Status Colors (High Contrast for Sunlight):
+Low Risk: Emerald #059669
+Monitor/Testing Needed: Amber #D97706
+Immediate Treatment/Critical: Crimson #DC2626
+Design Style
+Field-Tested UI: High contrast for outdoor use; icons accompanied by text for varying literacy levels.
+Large Interaction Zones: Designed for one-handed operation while holding a medical kit.
+Zero-Fluff: Every word must serve a clinical purpose.
+
+Navigation
+New Assessment: Quick start for a new patient.
+Patient Queue: Active cases waiting for follow-up or lab results.
+Protocols: Searchable library of treatment guidelines (Offline-first).
+
+User Journey: The Triage Flow
+1. Intake & Vitals
+The CHW inputs the core "Red Flags."
+Patient Info: Age (Priority for Under-5s), Weight, Location.
+Symptom Checklist: Fever, Respiratory Distress, Anemia (Pale conjunctiva), Dehydration, Altered Consciousness.
+Vitals Input: Temp, Heart Rate, SpO2 (if available).
+2. Pattern Matching Engine (The "Rule-Out")
+Instead of a single diagnosis, the app provides a Probability Stack.
+Matches Found:
+Severe Malaria (87% Match)
+Pneumonia (12% Match)
+Reasoning: "Matches triad of Fever + Anemia + Respiratory Distress."
+3. Actionable Protocol (The "Bridge")
+The app immediately surface the correct medical protocol.
+Immediate Action: "Start IV/IM Artemisinin immediately per WHO Protocol 3."
+Dosage Calculator: Automates dosage based on the weight entered in Step 1 to prevent errors.
+Referral Logic: "If symptoms do not improve in 12 hours, transport to Level 2 facility."
+
+Key Features
+Guided Clinical Observation (Photo/Video)
+Purpose: Capturing physical signs like chest indrawing (Pneumonia) or skin turgor (Dehydration).
+Guidance: "Film the child's chest for 10 seconds while they breathe."
+AI Feedback: Analyzes respiratory rate/effort to confirm "Distress."
+Outbreak Alert System (The "Rule-Out" Failure)
+The Logic: If a patient presents with severe symptoms but low confidence scores for all known local diseases, the app triggers an "Atypical Case" flag.
+Action: Triggers GPS-tagged report to district health officials to flag a potential novel outbreak.
+Offline Protocol Library
+Full text and visual aids for standard care (WHO IMCI guidelines) stored locally on the device.
+
+Screens Summary
+Dashboard: Current local outbreak alerts + "Start New Assessment" button.
+Patient Intake: Age, weight, and duration of illness.
+Symptom Selector: Visual grid of symptoms (Cough, Diarrhea, Lethargy).
+Observation Assist: Camera interface for capturing clinical signs.
+Analysis Result: Confidence percentages for known diseases.
+Treatment Protocol: Step-by-step instructions + dosage calculator.
+Referral/Tracking: Logs when the first dose was administered.
+Patient Queue: List of patients in the community currently under observation.
+Outbreak Map: Heatmap of "Atypical" cases in the region.
+
+The "Why" (Supportive Tone for the CHW)
+"You are the first line of defense. This tool is here to back your expertise with the world's protocol library. When the labs are days away, your action today saves the life."
+Critical UX Priority:
+Reducing Cognitive Load: In a crisis, the CHW shouldn't have to calculate dosages or remember the specific symptoms of a rare malaria strain. The app does the math; the CHW does the care.
+

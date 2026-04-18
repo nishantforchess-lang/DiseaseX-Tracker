@@ -3,13 +3,23 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: DiseaseX Triage & Protocol Engine API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: patients
+    description: Patient management
+  - name: assessments
+    description: Triage assessments
+  - name: protocols
+    description: Treatment protocols
+  - name: outbreaks
+    description: Outbreak alerts
+  - name: dashboard
+    description: Dashboard summaries
 paths:
   /healthz:
     get:
@@ -24,6 +34,277 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /patients:
+    get:
+      operationId: listPatients
+      tags: [patients]
+      summary: List all patients
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, discharged, referred, all]
+      responses:
+        "200":
+          description: List of patients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Patient"
+    post:
+      operationId: createPatient
+      tags: [patients]
+      summary: Create a new patient record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePatientBody"
+      responses:
+        "201":
+          description: Patient created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+
+  /patients/{id}:
+    get:
+      operationId: getPatient
+      tags: [patients]
+      summary: Get a patient by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Patient details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+        "404":
+          description: Not found
+    patch:
+      operationId: updatePatient
+      tags: [patients]
+      summary: Update patient status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePatientBody"
+      responses:
+        "200":
+          description: Updated patient
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Patient"
+
+  /assessments:
+    get:
+      operationId: listAssessments
+      tags: [assessments]
+      summary: List all assessments
+      parameters:
+        - name: patientId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of assessments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assessment"
+    post:
+      operationId: createAssessment
+      tags: [assessments]
+      summary: Create a triage assessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssessmentBody"
+      responses:
+        "201":
+          description: Assessment created with pattern match results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+
+  /assessments/{id}:
+    get:
+      operationId: getAssessment
+      tags: [assessments]
+      summary: Get an assessment by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Assessment details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+        "404":
+          description: Not found
+
+  /assessments/{id}/first-dose:
+    post:
+      operationId: logFirstDose
+      tags: [assessments]
+      summary: Log first dose administered
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogFirstDoseBody"
+      responses:
+        "200":
+          description: First dose logged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assessment"
+
+  /protocols:
+    get:
+      operationId: listProtocols
+      tags: [protocols]
+      summary: List all treatment protocols
+      parameters:
+        - name: disease
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of protocols
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Protocol"
+
+  /protocols/{id}:
+    get:
+      operationId: getProtocol
+      tags: [protocols]
+      summary: Get a protocol by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Protocol details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Protocol"
+        "404":
+          description: Not found
+
+  /outbreaks:
+    get:
+      operationId: listOutbreakAlerts
+      tags: [outbreaks]
+      summary: List outbreak alerts
+      responses:
+        "200":
+          description: List of outbreak alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OutbreakAlert"
+    post:
+      operationId: createOutbreakAlert
+      tags: [outbreaks]
+      summary: Flag atypical case as potential outbreak
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOutbreakAlertBody"
+      responses:
+        "201":
+          description: Outbreak alert created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OutbreakAlert"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/patient-queue:
+    get:
+      operationId: getPatientQueue
+      tags: [dashboard]
+      summary: Get active patient queue with latest assessment
+      responses:
+        "200":
+          description: Patient queue
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientQueueEntry"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +315,295 @@ components:
       required:
         - status
 
+    Patient:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        ageYears:
+          type: ["integer", "null"]
+        ageMonths:
+          type: ["integer", "null"]
+        weightKg:
+          type: ["number", "null"]
+        location:
+          type: string
+        status:
+          type: string
+          enum: [active, discharged, referred]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - location
+        - status
+        - createdAt
+        - updatedAt
+
+    CreatePatientBody:
+      type: object
+      properties:
+        name:
+          type: string
+        ageYears:
+          type: ["integer", "null"]
+        ageMonths:
+          type: ["integer", "null"]
+        weightKg:
+          type: ["number", "null"]
+        location:
+          type: string
+      required:
+        - name
+        - location
+
+    UpdatePatientBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [active, discharged, referred]
+        weightKg:
+          type: ["number", "null"]
+
+    Assessment:
+      type: object
+      properties:
+        id:
+          type: integer
+        patientId:
+          type: integer
+        symptoms:
+          type: array
+          items:
+            type: string
+        tempCelsius:
+          type: ["number", "null"]
+        heartRateBpm:
+          type: ["integer", "null"]
+        spo2Percent:
+          type: ["integer", "null"]
+        durationDays:
+          type: ["integer", "null"]
+        patternMatches:
+          type: array
+          items:
+            $ref: "#/components/schemas/PatternMatch"
+        isAtypical:
+          type: boolean
+        firstDoseAt:
+          type: ["string", "null"]
+          format: date-time
+        firstDoseDrug:
+          type: ["string", "null"]
+        referralAt:
+          type: ["string", "null"]
+          format: date-time
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - patientId
+        - symptoms
+        - patternMatches
+        - isAtypical
+        - createdAt
+        - updatedAt
+
+    PatternMatch:
+      type: object
+      properties:
+        disease:
+          type: string
+        confidencePercent:
+          type: integer
+        reasoning:
+          type: string
+        protocolId:
+          type: ["integer", "null"]
+      required:
+        - disease
+        - confidencePercent
+        - reasoning
+
+    CreateAssessmentBody:
+      type: object
+      properties:
+        patientId:
+          type: integer
+        symptoms:
+          type: array
+          items:
+            type: string
+        tempCelsius:
+          type: ["number", "null"]
+        heartRateBpm:
+          type: ["integer", "null"]
+        spo2Percent:
+          type: ["integer", "null"]
+        durationDays:
+          type: ["integer", "null"]
+        notes:
+          type: ["string", "null"]
+      required:
+        - patientId
+        - symptoms
+
+    LogFirstDoseBody:
+      type: object
+      properties:
+        drug:
+          type: string
+        notes:
+          type: ["string", "null"]
+      required:
+        - drug
+
+    Protocol:
+      type: object
+      properties:
+        id:
+          type: integer
+        disease:
+          type: string
+        title:
+          type: string
+        severity:
+          type: string
+          enum: [mild, moderate, severe, critical]
+        immediateAction:
+          type: string
+        steps:
+          type: array
+          items:
+            type: string
+        referralThreshold:
+          type: string
+        dosageFormula:
+          type: ["string", "null"]
+        drugs:
+          type: array
+          items:
+            type: string
+        whoBased:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - disease
+        - title
+        - severity
+        - immediateAction
+        - steps
+        - referralThreshold
+        - drugs
+        - whoBased
+        - createdAt
+
+    OutbreakAlert:
+      type: object
+      properties:
+        id:
+          type: integer
+        assessmentId:
+          type: integer
+        location:
+          type: string
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+        symptomsSummary:
+          type: string
+        status:
+          type: string
+          enum: [active, resolved, monitoring]
+        reportedAt:
+          type: string
+          format: date-time
+        resolvedAt:
+          type: ["string", "null"]
+          format: date-time
+      required:
+        - id
+        - assessmentId
+        - location
+        - symptomsSummary
+        - status
+        - reportedAt
+
+    CreateOutbreakAlertBody:
+      type: object
+      properties:
+        assessmentId:
+          type: integer
+        location:
+          type: string
+        latitude:
+          type: ["number", "null"]
+        longitude:
+          type: ["number", "null"]
+        symptomsSummary:
+          type: string
+      required:
+        - assessmentId
+        - location
+        - symptomsSummary
+
+    DashboardSummary:
+      type: object
+      properties:
+        activeCases:
+          type: integer
+        assessmentsToday:
+          type: integer
+        activeOutbreakAlerts:
+          type: integer
+        criticalCases:
+          type: integer
+        referralsPending:
+          type: integer
+        firstDosesAdministered:
+          type: integer
+        atypicalCasesThisWeek:
+          type: integer
+      required:
+        - activeCases
+        - assessmentsToday
+        - activeOutbreakAlerts
+        - criticalCases
+        - referralsPending
+        - firstDosesAdministered
+        - atypicalCasesThisWeek
+
+    PatientQueueEntry:
+      type: object
+      properties:
+        patient:
+          $ref: "#/components/schemas/Patient"
+        latestAssessment:
+          $ref: "#/components/schemas/Assessment"
+        topMatch:
+          $ref: "#/components/schemas/PatternMatch"
+        urgency:
+          type: string
+          enum: [low, monitor, critical]
+      required:
+        - patient
+        - latestAssessment
+        - urgency
