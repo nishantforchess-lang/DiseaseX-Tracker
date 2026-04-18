@@ -76,8 +76,8 @@ export default function ProtocolsScreen() {
         </View>
       ) : (
         <FlatList
-          data={protocols ?? []}
-          keyExtractor={(p) => String(p.id)}
+          data={Array.isArray(protocols) ? protocols : []}
+          keyExtractor={(p, index) => (p?.id != null ? String(p.id) : `protocol-${index}`)}
           contentContainerStyle={{ padding: 16, paddingBottom: bottomPad + 80, gap: 12 }}
           ListEmptyComponent={
             <View style={{ alignItems: "center", padding: 40 }}>
@@ -122,7 +122,7 @@ export default function ProtocolsScreen() {
                       {item.immediateAction}
                     </Text>
                     <Text style={{ fontFamily: "Inter_400Regular", fontSize: 12, color: colors.mutedForeground, marginTop: 8 }}>
-                      {item.drugs.join(", ")}
+                      {Array.isArray(item.drugs) ? item.drugs.join(", ") : ""}
                     </Text>
                   </View>
                   <Feather name="chevron-right" size={20} color={colors.mutedForeground} style={{ marginLeft: 12 }} />

@@ -44,7 +44,8 @@ export default function QueueScreen() {
 
   const { data: queue, isLoading, refetch } = useGetPatientQueue();
 
-  const filtered = (queue ?? []).filter((e) => filter === "all" || e.urgency === filter);
+  const queueList = Array.isArray(queue) ? queue : [];
+  const filtered = queueList.filter((e) => filter === "all" || e.urgency === filter);
 
   const filters: { key: UrgencyFilter; label: string; color: string }[] = [
     { key: "all", label: "All", color: colors.primary },

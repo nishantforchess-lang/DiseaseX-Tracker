@@ -44,8 +44,10 @@ export default function DashboardScreen() {
   const { data: outbreaks, refetch: refetchOutbreaks } = useListOutbreakAlerts();
 
   const isLoading = sumLoading || queueLoading;
-  const activeOutbreaks = outbreaks?.filter((o) => o.status === "active") ?? [];
-  const criticalQueue = queue?.filter((e) => e.urgency === "critical" || e.urgency === "monitor") ?? [];
+  const outbreaksList = Array.isArray(outbreaks) ? outbreaks : [];
+  const queueList = Array.isArray(queue) ? queue : [];
+  const activeOutbreaks = outbreaksList.filter((o) => o.status === "active");
+  const criticalQueue = queueList.filter((e) => e.urgency === "critical" || e.urgency === "monitor");
 
   const onRefresh = () => {
     refetchSum();

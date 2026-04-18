@@ -100,7 +100,7 @@ export default function OutbreaksScreen() {
         </View>
       ) : (
         <FlatList
-          data={outbreaks ?? []}
+          data={Array.isArray(outbreaks) ? outbreaks : []}
           keyExtractor={(o) => String(o.id)}
           refreshControl={<RefreshControl refreshing={false} onRefresh={refetch} tintColor={colors.primary} />}
           contentContainerStyle={{ padding: 16, paddingBottom: bottomPad + 80, gap: 12, flexGrow: 1 }}
